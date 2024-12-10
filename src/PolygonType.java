@@ -28,7 +28,7 @@ public class PolygonType {
 
         if (numSides == 3) {
             System.out.println("This is a triangle");
-            JFrame frame = new JFrame("Image Display with Swing");
+            JFrame frame = new JFrame("This is a triangle");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(400, 400);
             frame.setLayout(new BorderLayout());
