@@ -1,5 +1,3 @@
-package cosc113.guimathlab.dao;
-
 public class CalculatorProject {
 
     // Basic Arithmetic
