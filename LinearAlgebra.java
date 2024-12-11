@@ -1,4 +1,3 @@
-package cosc113.guimathlab.dao;
 
 public class LinearAlgebra {
     private double[][] matrix;
