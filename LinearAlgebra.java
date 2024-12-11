@@ -1,3 +1,5 @@
+package cosc113.guimathlab.dao;
+
 public class LinearAlgebra {
     private double[][] matrix;
     private int rows;
@@ -31,8 +33,8 @@ public class LinearAlgebra {
 
     public void rowEchelonForm() {
         for (int i = 0; i < rows; i++) {
-            if (matrix[i][i] == 0) {
-                for (int k = i + 1; k < rows; k++) {
+            if (matrix[i][i] == 0) { //The idea here is to check if the first element in the matrix is 0, if it is, swap the row with the next row with a non-zero element.
+                for (int k = i + 1; k < rows; k++) { //This loop is to find the next row with a non-zero element.
                     if (matrix[k][i] != 0) {
                         double[] temp = matrix[i];
                         matrix[i] = matrix[k];
@@ -41,7 +43,7 @@ public class LinearAlgebra {
                     }
                 }
             }
-            for (int j = i + 1; j < rows; j++) {
+            for (int j = i + 1; j < rows; j++) { //This loop performs row operations to make the elements below the diagonal 0.
                 double ratio = matrix[j][i] / matrix[i][i];
                 for (int k = 0; k < columns; k++) {
                     matrix[j][k] -= ratio * matrix[i][k];
@@ -50,7 +52,7 @@ public class LinearAlgebra {
         }
     }
 
-    public void reducedRowEchelonForm() {
+    public void reducedRowEchelonForm() { //This is the elder brother of rowEchelonForm. It makes the elements above the diagonal 0.
         rowEchelonForm();
         for (int i = rows - 1; i >= 0; i--) {
             for (int j = i - 1; j >= 0; j--) {
@@ -68,18 +70,46 @@ public class LinearAlgebra {
         }
     }
 
-    public String determinant() {
+    // Method to convert a matrix to upper triangular form.
+    private double[][] toUpperTriangular(double[][] matrix) {
+        int n = matrix.length;
+        double[][] upperMatrix = new double[n][n];
+
+        // Copy original matrix to avoid the wahala of modifying it.
+        for (int i = 0; i < n; i++) {
+            System.arraycopy(matrix[i], 0, upperMatrix[i], 0, n);
+        }
+
+        // Perform Gaussian elimination
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (upperMatrix[i][i] == 0) {
+                    throw new ArithmeticException("Division by zero detected during Gaussian elimination.");
+                }
+                double factor = upperMatrix[j][i] / upperMatrix[i][i];
+                for (int k = i; k < n; k++) {
+                    upperMatrix[j][k] -= factor * upperMatrix[i][k];
+                }
+            }
+        }
+        return upperMatrix;
+    }
+
+    public String determinant() { //Now life is easy, because the matrix is in upper triangular form.
         if (rows != columns) {
             return "The matrix is not square. Determinant cannot be calculated.";
         }
+
+        double[][] upperTriangularMatrix = toUpperTriangular(matrix);
         double det = 1;
         for (int i = 0; i < rows; i++) {
-            det *= matrix[i][i];
+            det *= upperTriangularMatrix[i][i];
         }
         return "The determinant of the matrix is: " + det;
     }
 
-    public double[][] transpose() {
+
+    public double[][] transpose() { //This method exchanges the rows with the columns. Light work, haha
         double[][] transposeMatrix = new double[columns][rows];
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
@@ -89,6 +119,7 @@ public class LinearAlgebra {
         return transposeMatrix;
     }
 
+    //This is one of the things we needed help with. We just added it for good measure. Definitely not our work.
     public double[][] inverse() {
         if (rows != columns) {
             return null;
@@ -133,18 +164,4 @@ public class LinearAlgebra {
         return inverseMatrix;
     }
 
-    public String getMatrixString() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                if (matrix[i][j] == (long) matrix[i][j]) {
-                    sb.append((long) matrix[i][j]).append(" ");
-                } else {
-                    sb.append(matrix[i][j]).append(" ");
-                }
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
 }
